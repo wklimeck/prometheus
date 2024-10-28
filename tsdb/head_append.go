@@ -1032,7 +1032,6 @@ func (a *headAppender) Commit() (err error) {
 		wblSamples          []record.RefSample
 		wblHistograms       []record.RefHistogramSample
 		wblFloatHistograms  []record.RefFloatHistogramSample
-		wblCustomValues     []record.RefCustomValues
 		oooMmapMarkers      map[chunks.HeadSeriesRef][]chunks.ChunkDiskMapperRef
 		oooMmapMarkersCount int
 		oooRecords          [][]byte
@@ -1056,7 +1055,6 @@ func (a *headAppender) Commit() (err error) {
 			wblSamples = nil
 			wblHistograms = nil
 			wblFloatHistograms = nil
-			wblCustomValues = nil
 			oooMmapMarkers = nil
 			oooMmapMarkersCount = 0
 			return
@@ -1096,7 +1094,6 @@ func (a *headAppender) Commit() (err error) {
 		wblSamples = nil
 		wblHistograms = nil
 		wblFloatHistograms = nil
-		wblCustomValues = nil
 		oooMmapMarkers = nil
 	}
 	for i, s := range a.samples {
@@ -1252,12 +1249,6 @@ func (a *headAppender) Commit() (err error) {
 			}
 			if ok {
 				wblHistograms = append(wblHistograms, s)
-				if histogram.IsCustomBucketsSchema(s.H.Schema) {
-					wblCustomValues = append(wblCustomValues, record.RefCustomValues{
-						Ref:          s.Ref,
-						CustomValues: s.H.CustomValues,
-					})
-				}
 				if s.T < oooMinT {
 					oooMinT = s.T
 				}
@@ -1354,12 +1345,6 @@ func (a *headAppender) Commit() (err error) {
 			}
 			if ok {
 				wblFloatHistograms = append(wblFloatHistograms, s)
-				if histogram.IsCustomBucketsSchema(s.FH.Schema) {
-					wblCustomValues = append(wblCustomValues, record.RefCustomValues{
-						Ref:          s.Ref,
-						CustomValues: s.FH.CustomValues,
-					})
-				}
 				if s.T < oooMinT {
 					oooMinT = s.T
 				}
